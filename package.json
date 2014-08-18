@@ -1,19 +1,44 @@
 {
   "name": "livenico.js",
-  "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Utilities for niconico live.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/hdemon/livenico.js",
+  "author": {
+    "name": "Masami Yonehara",
+    "email": "zeitdiebe@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hdemon/livenico.js.git"
+    "url": "git://github.com/hdemon/livenico.js.git"
   },
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/hdemon/livenico.js/issues"
   },
-  "homepage": "https://github.com/hdemon/livenico.js"
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/hdemon/livenico.js/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/livenico",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "load-grunt-tasks": "*",
+    "grunt-contrib-coffee": "~0.7",
+    "grunt-contrib-watch": "*",
+    "grunt-mocha-test": "*",
+    "coffee-script": "*",
+    "mocha": "*",
+    "sinon": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "scaffolt": "*",
+    "grunt": "~0.4.5"
+  },
+  "keywords": []
 }
