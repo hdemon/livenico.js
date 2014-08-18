@@ -6,8 +6,14 @@ The best project ever.
 Install the module with: `npm install livenico`
 
 ```javascript
-var livenico = require('livenico');
-livenico.awesome(); // "awesome"
+Nico = require './lib/livenico'
+
+n = new Nico({
+  mail: "hoge@example.org"
+  password: "123456"
+})
+
+(n.getMovieComment "sm9").then (result) -> console.log result
 ```
 
 ## Documentation
@@ -23,5 +29,5 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 _(Nothing yet)_
 
 ## License
-Copyright (c) 2014 Masami Yonehara  
+Copyright (c) 2014 Masami Yonehara
 Licensed under the MIT license.
