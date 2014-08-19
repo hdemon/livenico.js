@@ -1,3 +1,4 @@
+net = require 'net'
 tough = require 'tough-cookie'
 request = require "request"
 Promise = require "bluebird"
@@ -10,15 +11,42 @@ class Nico
   constructor: (args) ->
     {@mail, @password} = args
 
-  getFlv: (id, response) ->
+  getPlayerStatus: (id) ->
     new Request
-      url: "http://flapi.nicovideo.jp/api/getflv/sm24107653"
+      url: "http://live.nicovideo.jp/api/getplayerstatus?v=#{id}"
+    .then (response) ->
+      Promise.resolve response.body
+
+  getFlv: (id) ->
+    new Request
+      url: "http://flapi.nicovideo.jp/api/getflv/#{id}"
     .then (response) -> Promise.resolve qs.parse response.body
+
+  getWeyBackKey: (thread) ->
+    new Request
+      url: "http://watch.live.nicovideo.jp/api/getwaybackkey?thread=#{thread}"
+    .then (response) -> Promise.resolve response.body.replace /waybackkey\=/, ''
 
   getMessage: (movieInfo) ->
     new Request
       method: "GET"
       url: "#{movieInfo.ms.replace 'api', 'api.json'}thread?res_from=-1000&version=20090904&thread=#{movieInfo.thread_id}"
+
+  getLiveMovieMessage: (playerStatus) ->
+    # console.log playerStatus
+    new Promise (resolve, reject) =>
+      addr = (playerStatus.match /<addr>[a-z0-9.]*/)[0].replace /<addr>/, ''
+      port = (playerStatus.match /<port>\d*/)[0].replace /<port>/, ''
+      thread = (playerStatus.match /<thread>\d*/)[0].replace /<thread>/, ''
+      user_id = (playerStatus.match /<user_id>\d*/)[0].replace /<user_id>/, ''
+      (@getWeyBackKey thread).then (weyBackKey) ->
+        socket = new net.Socket({writable: true, readable: true})
+        socket.connect port, addr
+        socket.on "connect", (r) ->
+          socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"1408456385\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
+          socket.end()
+        socket.on "data", (r) ->
+          console.log r.toString()
 
   getMovieComment: (id) ->
     @login
@@ -26,6 +54,13 @@ class Nico
       password: @password
     .then =>
       (@getFlv id).then @getMessage
+
+  getLiveMovieComment: (id) ->
+    @login
+      mail: @mail
+      password: @password
+    .then =>
+      (@getPlayerStatus id).then (r) => @getLiveMovieMessage r
 
   login: (args) ->
     new Request
