@@ -1,6 +1,6 @@
 # livenico [![Build Status](https://secure.travis-ci.org/hdemon/livenico.js.png?branch=master)](http://travis-ci.org/hdemon/livenico.js)
 
-The best project ever.
+Utilities for niconico live.
 
 ## Getting Started
 Install the module with: `npm install livenico`
@@ -13,7 +13,8 @@ n = new Nico({
   password: "123456"
 })
 
-(n.getMovieComment "sm9").then (result) -> console.log result
+(n.getMovieComment "sm9").then (data) -> console.log data.toString()
+(n.getLiveMovieComment "lv189823440").then (data) => console.log data.toString()
 ```
 
 ## Documentation
