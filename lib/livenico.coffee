@@ -32,15 +32,13 @@ class Nico
       method: "GET"
       url: "#{movieInfo.ms.replace 'api', 'api.json'}thread?res_from=-1000&version=20090904&thread=#{movieInfo.thread_id}"
 
-  getLiveMovieMessage: (playerStatus) ->
+  getLiveMovieMessage: (playerStatusHash) ->
+    {addr, port, thread, user_id} = playerStatusHash
+
     new Promise (resolve, reject) =>
-      addr = (playerStatus.match /<addr>[a-z0-9.]*/)[0].replace /<addr>/, ''
-      port = (playerStatus.match /<port>\d*/)[0].replace /<port>/, ''
-      thread = (playerStatus.match /<thread>\d*/)[0].replace /<thread>/, ''
-      user_id = (playerStatus.match /<user_id>\d*/)[0].replace /<user_id>/, ''
       (@getWeyBackKey thread).then (weyBackKey) ->
         result = []
-        socket = new net.Socket({writable: true, readable: true})
+        socket = new net.Socket({ writable: true, readable: true })
         socket.connect port, addr
         socket.on "connect", ->
           socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
@@ -51,20 +49,27 @@ class Nico
           resolve result
 
   getMovieComment: (id) ->
-    @login
-      mail: @mail
-      password: @password
-    .then =>
+    @login().then =>
       (@getFlv id).then @getMessage
 
   getLiveMovieComment: (id) ->
-    @login
-      mail: @mail
-      password: @password
-    .then =>
-      (@getPlayerStatus id).then (playerStatus) => @getLiveMovieMessage playerStatus
+    @login().then =>
+      (@getPlayerStatus id).then (playerStatus) => @getLiveMovieMessage @parsePlayerStatus playerStatus
 
-  login: (args) ->
+  getAllLiveMovieComment: (id) ->
+    @login().then =>
+      (@getPlayerStatus id).then (playerStatus) =>
+        @getLiveMovieMessage @parsePlayerStatus playerStatus
+
+  parsePlayerStatus: (playerStatus) ->
+    addr = (playerStatus.match /<addr>[a-z0-9.]*/)[0].replace /<addr>/, ''
+    port = (playerStatus.match /<port>\d*/)[0].replace /<port>/, ''
+    thread = (playerStatus.match /<thread>\d*/)[0].replace /<thread>/, ''
+    user_id = (playerStatus.match /<user_id>\d*/)[0].replace /<user_id>/, ''
+
+    {addr, port, thread, user_id}
+
+  login: ->
     new Request
       url: "https://secure.nicovideo.jp/secure/login?site=niconico"
       jar: j
@@ -72,8 +77,8 @@ class Nico
       headers:
         "Content-Type": "application/x-www-form-urlencoded"
       body: qs.stringify
-        "mail_tel": args.mail
-        "password": args.password
+        "mail_tel": @mail
+        "password": @password
 
 class Request
   constructor: (args) ->
