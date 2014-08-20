@@ -33,7 +33,6 @@ class Nico
       url: "#{movieInfo.ms.replace 'api', 'api.json'}thread?res_from=-1000&version=20090904&thread=#{movieInfo.thread_id}"
 
   getLiveMovieMessage: (playerStatus) ->
-    # console.log playerStatus
     new Promise (resolve, reject) =>
       addr = (playerStatus.match /<addr>[a-z0-9.]*/)[0].replace /<addr>/, ''
       port = (playerStatus.match /<port>\d*/)[0].replace /<port>/, ''
@@ -42,11 +41,11 @@ class Nico
       (@getWeyBackKey thread).then (weyBackKey) ->
         socket = new net.Socket({writable: true, readable: true})
         socket.connect port, addr
-        socket.on "connect", (r) ->
-          socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"1408456385\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
+        socket.on "connect", ->
+          socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
           socket.end()
-        socket.on "data", (r) ->
-          console.log r.toString()
+        socket.on "data", (data) ->
+          console.log data.toString()
 
   getMovieComment: (id) ->
     @login
@@ -60,7 +59,7 @@ class Nico
       mail: @mail
       password: @password
     .then =>
-      (@getPlayerStatus id).then (r) => @getLiveMovieMessage r
+      (@getPlayerStatus id).then (playerStatus) => @getLiveMovieMessage playerStatus
 
   login: (args) ->
     new Request
