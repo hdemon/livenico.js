@@ -39,13 +39,16 @@ class Nico
       thread = (playerStatus.match /<thread>\d*/)[0].replace /<thread>/, ''
       user_id = (playerStatus.match /<user_id>\d*/)[0].replace /<user_id>/, ''
       (@getWeyBackKey thread).then (weyBackKey) ->
+        result = []
         socket = new net.Socket({writable: true, readable: true})
         socket.connect port, addr
         socket.on "connect", ->
           socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
           socket.end()
         socket.on "data", (data) ->
-          console.log data.toString()
+          result.push data
+        socket.on "end", ->
+          resolve result
 
   getMovieComment: (id) ->
     @login
