@@ -32,7 +32,7 @@ class Nico
       method: "GET"
       url: "#{movieInfo.ms.replace 'api', 'api.json'}thread?res_from=-1000&version=20090904&thread=#{movieInfo.thread_id}"
 
-  getLiveMovieMessage: (playerStatusHash) ->
+  getLiveMovieMessage: (playerStatusHash, options={when:''}) ->
     {addr, port, thread, user_id} = playerStatusHash
 
     new Promise (resolve, reject) =>
@@ -41,7 +41,7 @@ class Nico
         socket = new net.Socket({ writable: true, readable: true })
         socket.connect port, addr
         socket.on "connect", ->
-          socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
+          socket.write "<thread thread=\"#{thread}\" version=\"20061206\" res_from=\"-1000\" when=\"#{options.when}\" waybackkey=\"#{weyBackKey}\" user_id=\"#{user_id}\" scores=\"1\" />\0"
           socket.end()
         socket.on "data", (data) ->
           result.push data
@@ -52,9 +52,10 @@ class Nico
     @login().then =>
       (@getFlv id).then @getMessage
 
-  getLiveMovieComment: (id) ->
-    @login().then =>
-      (@getPlayerStatus id).then (playerStatus) => @getLiveMovieMessage @parsePlayerStatus playerStatus
+  getLiveMovieComment: (id, options) ->
+    @login()
+      .then => (@getPlayerStatus id)
+      .then (playerStatus) => @getLiveMovieMessage (@parsePlayerStatus playerStatus), options
 
   getAllLiveMovieComment: (id) ->
     @login().then =>
