@@ -3,6 +3,7 @@ tough = require 'tough-cookie'
 request = require "request"
 Promise = require "bluebird"
 qs = require 'querystring'
+libxmljs = require 'libxmljs'
 
 j = request.jar()
 request = request.defaults {jar: j}
@@ -50,7 +51,7 @@ class Nico
 
   getMovieComment: (id) ->
     @login()
-      .then => @getFlv id
+      .then => (@getFlv id)
       .then @getMessage
 
   getLiveMovieComment: (id, options) ->
@@ -63,11 +64,14 @@ class Nico
       (@getPlayerStatus id).then (playerStatus) =>
         @getLiveMovieMessage @parsePlayerStatus playerStatus
 
+
   parsePlayerStatus: (playerStatus) ->
-    addr = (playerStatus.match /<addr>[a-z0-9.]*/)[0].replace /<addr>/, ''
-    port = (playerStatus.match /<port>\d*/)[0].replace /<port>/, ''
-    thread = (playerStatus.match /<thread>\d*/)[0].replace /<thread>/, ''
-    user_id = (playerStatus.match /<user_id>\d*/)[0].replace /<user_id>/, ''
+    obj = libxmljs.parseXml(playerStatus)
+    getplayerstatus = obj.get('//getplayerstatus')
+    addr = getplayerstatus.get('//ms/addr').text()
+    port = getplayerstatus.get('//ms/port').text()
+    thread = getplayerstatus.get('//ms/thread').text()
+    user_id = getplayerstatus.get('//user/user_id').text()
 
     {addr, port, thread, user_id}
 
