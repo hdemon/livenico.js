@@ -49,12 +49,13 @@ class Nico
           resolve result
 
   getMovieComment: (id) ->
-    @login().then =>
-      (@getFlv id).then @getMessage
+    @login()
+      .then => @getFlv id
+      .then @getMessage
 
   getLiveMovieComment: (id, options) ->
     @login()
-      .then => (@getPlayerStatus id)
+      .then => @getPlayerStatus id
       .then (playerStatus) => @getLiveMovieMessage (@parsePlayerStatus playerStatus), options
 
   getAllLiveMovieComment: (id) ->
