@@ -85,7 +85,7 @@ class Nico
     {addr, port, thread, user_id, open_time, status, code}
 
   login: ->
-    return Promise.resolve() if @session && @session.toString().match /user_session\=user_session_\d*/
+    return Promise.resolve() if @hasAvailableSession @session
     new Request
       url: "https://secure.nicovideo.jp/secure/login?site=niconico"
       jar: j
@@ -98,6 +98,9 @@ class Nico
     .then (result) =>
       @session ?= j._jar.store.idx['nicovideo.jp']['/'].user_session
       result
+
+  hasAvailableSession: (session) ->
+    @session && @session.toString().match /user_session\=user_session_\d*/
 
 class Request
   constructor: (args) ->
