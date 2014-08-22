@@ -11,6 +11,7 @@ request = request.defaults {jar: j}
 
 class Nico
   constructor: (args) ->
+    @session = null
     {@mail, @password} = args
 
   getPlayerStatus: (id) ->
@@ -84,6 +85,7 @@ class Nico
     {addr, port, thread, user_id, open_time, status, code}
 
   login: ->
+    return Promise.resolve() if @session && @session.toString().match /user_session\=user_session_\d*/
     new Request
       url: "https://secure.nicovideo.jp/secure/login?site=niconico"
       jar: j
@@ -93,6 +95,9 @@ class Nico
       body: qs.stringify
         "mail_tel": @mail
         "password": @password
+    .then (result) =>
+      @session ?= j._jar.store.idx['nicovideo.jp']['/'].user_session
+      result
 
 class Request
   constructor: (args) ->
