@@ -28,17 +28,18 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "load-grunt-tasks": "*",
+    "chai": "*",
+    "coffee-script": "*",
+    "grunt": "~0.4.5",
     "grunt-contrib-coffee": "~0.7",
     "grunt-contrib-watch": "*",
     "grunt-mocha-test": "*",
-    "coffee-script": "*",
+    "load-grunt-tasks": "*",
     "mocha": "*",
-    "sinon": "*",
-    "chai": "*",
-    "sinon-chai": "*",
     "scaffolt": "*",
-    "grunt": "~0.4.5"
+    "sinon": "*",
+    "sinon-chai": "*",
+    "source-map-support": "^0.2.7"
   },
   "keywords": [],
   "dependencies": {

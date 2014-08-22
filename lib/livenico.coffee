@@ -4,6 +4,7 @@ request = require "request"
 Promise = require "bluebird"
 qs = require 'querystring'
 libxmljs = require 'libxmljs'
+require('source-map-support')
 
 j = request.jar()
 request = request.defaults {jar: j}
