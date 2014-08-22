@@ -56,14 +56,13 @@ class Nico
 
   getLiveMovieComment: (id, options) ->
     @login()
-      .then => @getPlayerStatus id
-      .then (playerStatus) => @getLiveMovieMessage (@parsePlayerStatus playerStatus), options
-
-  getAllLiveMovieComment: (id) ->
-    @login().then =>
-      (@getPlayerStatus id).then (playerStatus) =>
-        @getLiveMovieMessage @parsePlayerStatus playerStatus
-
+      .then => (@getPlayerStatus id)
+      .then(@parsePlayerStatus)
+      .then (playerStatus) =>
+        if playerStatus.status == 'fail'
+          return Promise.reject playerStatus.code
+        @getLiveMovieMessage (@parsePlayerStatus playerStatus), options
+      .catch Promise.reject
 
   parsePlayerStatus: (playerStatus) ->
     obj = libxmljs.parseXml(playerStatus)
@@ -72,8 +71,10 @@ class Nico
     port = getplayerstatus.get('//ms/port').text()
     thread = getplayerstatus.get('//ms/thread').text()
     user_id = getplayerstatus.get('//user/user_id').text()
+    status = getplayerstatus.attr('status').value()
+    code = (if _tmp = getplayerstatus.attr('//code') then _tmp.text())
 
-    {addr, port, thread, user_id}
+    {addr, port, thread, user_id, status, code}
 
   login: ->
     new Request
