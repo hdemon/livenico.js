@@ -60,6 +60,7 @@ class Nico
       .then(@parsePlayerStatus)
       .then (playerStatus) =>
         return Promise.reject playerStatus.code if playerStatus.status == 'fail'
+        return Promise.reject "'when' option must be later than live movie's open time." if playerStatus.open_time >= options.when
         @getLiveMovieMessage playerStatus, options
       .catch Promise.reject
 
@@ -75,11 +76,12 @@ class Nico
       port = getplayerstatus.get('//ms/port').text()
       thread = getplayerstatus.get('//ms/thread').text()
       user_id = getplayerstatus.get('//user/user_id').text()
+      open_time = Number getplayerstatus.get('//open_time').text()
       code = null
 
     status = getplayerstatus.attr('status').value()
 
-    {addr, port, thread, user_id, status, code}
+    {addr, port, thread, user_id, open_time, status, code}
 
   login: ->
     new Request
