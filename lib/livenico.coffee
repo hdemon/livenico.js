@@ -15,8 +15,7 @@ class Nico
   getPlayerStatus: (id) ->
     new Request
       url: "http://live.nicovideo.jp/api/getplayerstatus?v=#{id}"
-    .then (response) ->
-      Promise.resolve response.body
+    .then (response) -> Promise.resolve response.body
 
   getFlv: (id) ->
     new Request
@@ -59,20 +58,25 @@ class Nico
       .then => (@getPlayerStatus id)
       .then(@parsePlayerStatus)
       .then (playerStatus) =>
-        if playerStatus.status == 'fail'
-          return Promise.reject playerStatus.code
-        @getLiveMovieMessage (@parsePlayerStatus playerStatus), options
+        return Promise.reject playerStatus.code if playerStatus.status == 'fail'
+        @getLiveMovieMessage playerStatus, options
       .catch Promise.reject
 
   parsePlayerStatus: (playerStatus) ->
-    obj = libxmljs.parseXml(playerStatus)
+    obj = libxmljs.parseXmlString playerStatus
     getplayerstatus = obj.get('//getplayerstatus')
-    addr = getplayerstatus.get('//ms/addr').text()
-    port = getplayerstatus.get('//ms/port').text()
-    thread = getplayerstatus.get('//ms/thread').text()
-    user_id = getplayerstatus.get('//user/user_id').text()
+
+    if getplayerstatus.toString().match(/\<error\>/)
+      code = (if _tmp = getplayerstatus.get('//code') then _tmp.text())
+      addr = port = thread = user_id = null
+    else
+      addr = getplayerstatus.get('//ms/addr').text()
+      port = getplayerstatus.get('//ms/port').text()
+      thread = getplayerstatus.get('//ms/thread').text()
+      user_id = getplayerstatus.get('//user/user_id').text()
+      code = null
+
     status = getplayerstatus.attr('status').value()
-    code = (if _tmp = getplayerstatus.attr('//code') then _tmp.text())
 
     {addr, port, thread, user_id, status, code}
 
