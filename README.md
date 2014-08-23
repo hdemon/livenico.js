@@ -4,7 +4,6 @@ Utilities for niconico live.
 
 ## Getting Started
 Install the module with: `npm install livenico`
-```
 
 ```javascript
 Nico = require 'livenico'
@@ -21,7 +20,7 @@ n.getLiveMovieComment "lv189823440"
 
 n.getLiveMovieAllComments "lv189823440"
   .then console.log
-
+```
 
 ## Documentation
 _(Coming soon)_
