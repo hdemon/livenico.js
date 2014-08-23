@@ -4,8 +4,8 @@ request = require "request"
 Promise = require "bluebird"
 qs = require 'querystring'
 cheerio = require 'cheerio'
-require('source-map-support')
 _ = require 'lodash'
+require('source-map-support')
 
 j = request.jar()
 request = request.defaults {jar: j}
@@ -67,7 +67,7 @@ class Nico
       .catch Promise.reject
 
   getLiveMovieComments: (id, options) ->
-    (@getLiveMovieCommentXml id, options).then (xml) => @parseCommentXml xml
+    (@getLiveMovieCommentXml id, options).then @parseCommentXml
 
   getLiveMovieAllComments: (id) ->
     new Promise (resolve, reject) =>
@@ -104,20 +104,20 @@ class Nico
 
   parsePlayerStatus: (playerStatus) ->
     $ = cheerio.load playerStatus
-    getplayerstatus = $('getplayerstatus')
+    g = $('getplayerstatus')
 
-    if getplayerstatus.find("error").html()
+    if g.find("error").html()
       addr = port = thread = user_id = null
-      code = getplayerstatus.find('code').text()
+      code = g.find('code').text()
     else
-      addr = getplayerstatus.find('ms addr').text()
-      port = getplayerstatus.find('ms port').text()
-      thread = getplayerstatus.find('ms thread').text()
-      user_id = getplayerstatus.find('user user_id').text()
-      open_time = Number getplayerstatus.find('open_time').text()
+      addr = g.find('ms addr').text()
+      port = g.find('ms port').text()
+      thread = g.find('ms thread').text()
+      user_id = g.find('user user_id').text()
+      open_time = Number g.find('open_time').text()
       code = null
 
-    status = getplayerstatus.attr('status')
+    status = g.attr('status')
 
     {addr, port, thread, user_id, open_time, status, code}
 
