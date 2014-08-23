@@ -13,8 +13,15 @@ n = new Nico({
   password: "123456"
 })
 
-(n.getMovieComment "sm9").then (data) -> console.log data.toString()
-(n.getLiveMovieComment "lv189823440").then (data) => console.log data.toString()
+n.getMovieComment "sm9"
+  .then console.log
+
+n.getLiveMovieComment "lv189823440"
+  .then console.log
+
+n.getLiveMovieAllComments "lv189823440"
+  .then console.log
+
 ```
 
 ## Documentation
