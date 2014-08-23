@@ -3,7 +3,7 @@ tough = require 'tough-cookie'
 request = require "request"
 Promise = require "bluebird"
 qs = require 'querystring'
-libxmljs = require 'libxmljs'
+cheerio = require 'cheerio'
 require('source-map-support')
 
 j = request.jar()
@@ -66,21 +66,21 @@ class Nico
       .catch Promise.reject
 
   parsePlayerStatus: (playerStatus) ->
-    obj = libxmljs.parseXmlString playerStatus
-    getplayerstatus = obj.get('//getplayerstatus')
+    $ = cheerio.load playerStatus
+    getplayerstatus = $('getplayerstatus')
 
-    if getplayerstatus.toString().match(/\<error\>/)
-      code = (if _tmp = getplayerstatus.get('//code') then _tmp.text())
+    if getplayerstatus.find("error").html()
       addr = port = thread = user_id = null
+      code = getplayerstatus.find('code').text()
     else
-      addr = getplayerstatus.get('//ms/addr').text()
-      port = getplayerstatus.get('//ms/port').text()
-      thread = getplayerstatus.get('//ms/thread').text()
-      user_id = getplayerstatus.get('//user/user_id').text()
-      open_time = Number getplayerstatus.get('//open_time').text()
+      addr = getplayerstatus.find('ms addr').text()
+      port = getplayerstatus.find('ms port').text()
+      thread = getplayerstatus.find('ms thread').text()
+      user_id = getplayerstatus.find('user user_id').text()
+      open_time = Number getplayerstatus.find('open_time').text()
       code = null
 
-    status = getplayerstatus.attr('status').value()
+    status = getplayerstatus.attr('status')
 
     {addr, port, thread, user_id, open_time, status, code}
 
