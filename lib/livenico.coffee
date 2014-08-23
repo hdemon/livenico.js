@@ -5,6 +5,7 @@ Promise = require "bluebird"
 qs = require 'querystring'
 cheerio = require 'cheerio'
 require('source-map-support')
+_ = require 'lodash'
 
 j = request.jar()
 request = request.defaults {jar: j}
@@ -64,6 +65,28 @@ class Nico
         return Promise.reject "'when' option must be later than live movie's open time." if playerStatus.open_time >= options.when
         @getLiveMovieCommentXmlBuffers playerStatus, options
       .catch Promise.reject
+
+  getLiveMovieComments: (id, options) ->
+    (@getLiveMovieCommentXml id, options).then (xml) => @parseCommentXml xml
+
+  parseCommentXml: (xml) ->
+    $ = cheerio.load xml, {decodeEntities: false}
+
+    _.map $('chat'), (el) ->
+      _el = $(el)
+
+      thread = _el.attr("thread")
+      _no = _el.attr("no")
+      vpos = _el.attr("vpos")
+      date = _el.attr("date")
+      date_usec = _el.attr("date_usec")
+      mail = _el.attr("mail")
+      user_id = _el.attr("user_id")
+      premium = _el.attr("premium")
+      anonymity = _el.attr("anonymity")
+      body = _el.text()
+
+      {thread, no:_no, vpos, date, date_usec, mail, user_id, premium, anonymity, body}
 
   parsePlayerStatus: (playerStatus) ->
     $ = cheerio.load playerStatus

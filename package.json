@@ -44,8 +44,9 @@
   "keywords": [],
   "dependencies": {
     "bluebird": "^2.3.0",
+    "cheerio": "^0.17.0",
+    "lodash": "^2.4.1",
     "request": "^2.40.0",
-    "tough-cookie": "^0.12.1",
-    "cheerio": "^0.17.0"
+    "tough-cookie": "^0.12.1"
   }
 }
