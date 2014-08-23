@@ -69,6 +69,20 @@ class Nico
   getLiveMovieComments: (id, options) ->
     (@getLiveMovieCommentXml id, options).then (xml) => @parseCommentXml xml
 
+  getLiveMovieAllComments: (id) ->
+    new Promise (resolve, reject) =>
+      array = []
+      recursion = (_when) =>
+        (@getLiveMovieCommentXml id, {when: _when}).then (xml) =>
+          array = (@parseCommentXml xml).concat array
+
+          firstComment = _.first array
+          if firstComment.no == '1'
+            resolve array
+          else
+            recursion Number firstComment.date
+      recursion()
+
   parseCommentXml: (xml) ->
     $ = cheerio.load xml, {decodeEntities: false}
 
