@@ -34,7 +34,7 @@ class Nico
       method: "GET"
       url: "#{movieInfo.ms.replace 'api', 'api.json'}thread?res_from=-1000&version=20090904&thread=#{movieInfo.thread_id}"
 
-  getLiveMovieXmlBuffers: (playerStatusHash, options={when:''}) ->
+  getLiveMovieCommentXmlBuffers: (playerStatusHash, options={when:''}) ->
     {addr, port, thread, user_id} = playerStatusHash
 
     new Promise (resolve, reject) =>
@@ -62,7 +62,7 @@ class Nico
       .then (playerStatus) =>
         return Promise.reject playerStatus.code if playerStatus.status == 'fail'
         return Promise.reject "'when' option must be later than live movie's open time." if playerStatus.open_time >= options.when
-        @getLiveMovieXmlBuffers playerStatus, options
+        @getLiveMovieCommentXmlBuffers playerStatus, options
       .catch Promise.reject
 
   parsePlayerStatus: (playerStatus) ->
