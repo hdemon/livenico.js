@@ -1,7 +1,7 @@
 {
   "name": "livenico",
   "description": "Utilities for niconico live.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/hdemon/livenico.js",
   "author": {
     "name": "Masami Yonehara",
@@ -20,12 +20,13 @@
       "url": "https://github.com/hdemon/livenico.js/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "lib/livenico",
+  "main": "src/livenico.js",
   "engines": {
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "prepublish": "coffee --compile --output ./src lib/"
   },
   "devDependencies": {
     "chai": "*",
