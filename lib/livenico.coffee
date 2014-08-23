@@ -48,7 +48,7 @@ class Nico
         socket.on "data", (data) ->
           result.push data
         socket.on "end", ->
-          resolve result
+          resolve result.join('').toString()
 
   getMovieCommentXml: (id) ->
     @login()
