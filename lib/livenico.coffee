@@ -5,7 +5,7 @@ Promise = require "bluebird"
 qs = require 'querystring'
 cheerio = require 'cheerio'
 _ = require 'lodash'
-require('source-map-support')
+require 'source-map-support'
 
 j = request.jar()
 request = request.defaults {jar: j}
@@ -81,7 +81,7 @@ class Nico
             resolve array
           else
             recursion Number firstComment.date
-      recursion()
+      recursion parseInt Date.now() / 1000
 
   parseCommentXml: (xml) ->
     $ = cheerio.load xml, {decodeEntities: false}
