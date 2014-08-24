@@ -89,16 +89,16 @@ class Nico
     _.map $('chat'), (el) ->
       _el = $(el)
 
-      thread = _el.attr("thread")
-      _no = _el.attr("no")
-      vpos = _el.attr("vpos")
-      date = _el.attr("date")
-      date_usec = _el.attr("date_usec")
-      mail = _el.attr("mail")
-      user_id = _el.attr("user_id")
-      premium = _el.attr("premium")
-      anonymity = _el.attr("anonymity")
-      body = _el.text()
+      thread = _el.attr("thread") || null
+      _no = _el.attr("no") || null
+      vpos = _el.attr("vpos") || null
+      date = _el.attr("date") || null
+      date_usec = _el.attr("date_usec" || null)
+      mail = _el.attr("mail") || null
+      user_id = _el.attr("user_id") || null
+      premium = _el.attr("premium") || null
+      anonymity = _el.attr("anonymity") || null
+      body = _el.text() || ''
 
       {thread, no:_no, vpos, date, date_usec, mail, user_id, premium, anonymity, body}
 
